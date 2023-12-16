@@ -56,6 +56,7 @@
 
 <script>
 import { validMoblie } from '@/utils/validate'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'Login',
@@ -92,6 +93,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['user/login']),
     showPwd() {
       if (this.passwordType === 'password') {
         this.passwordType = ''
@@ -103,18 +105,24 @@ export default {
       })
     },
     handleLogin() {
-      this.$refs.loginForm.validate(valid => {
-        if (valid) {
-          this.loading = true
-          this.$store.dispatch('user/login', this.loginForm).then(() => {
-            this.$router.push({ path: this.redirect || '/' })
-            this.loading = false
-          }).catch(() => {
-            this.loading = false
-          })
-        } else {
-          console.log('error submit!!')
-          return false
+      // 手动校验表单
+      // ref可以获取一个元素的dom对象
+      // ref作用到组件上的时候，可以获取到该组建的实例--this
+      this.$refs.loginForm.validate(async isOK=>{//element-ui里的form方法--去查阅
+        if(isOK){
+          try {
+            this.loading=true//打开登录按钮上的转圈
+            // 只要校验通过了 才能去调用action
+            await this['user/login'](this.loginForm)
+            // 应该登录成功之后
+            // async标记的函数实际上上是一个promise对象
+            // await下面的代码 都是成功执行的代码
+            this.$route.push('/')//切换到主页
+          } catch (error) {
+            console.log(error);
+          }finally{//不论执行try还是catch 都去关闭转圈
+            this.loading=false//关闭登录按钮上的转圈
+          }
         }
       })
     }
