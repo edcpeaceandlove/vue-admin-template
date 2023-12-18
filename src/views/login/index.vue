@@ -46,8 +46,8 @@
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin" class="loginBtn">登录</el-button>
 
       <div class="tips">
-        <span style="margin-right:20px;">账号：13800000002</span>
-        <span> 密码：123456</span>
+        <span style="margin-right:20px;">账号:17215987452</span>
+        <span> 密码:123456</span>
       </div>
 
     </el-form>
@@ -72,7 +72,7 @@ export default {
     }
     return {
       loginForm: {
-        mobile: '13800000002',
+        mobile: '17215987452',
         password: '123456'
       },
       loginRules: {
@@ -111,13 +111,14 @@ export default {
       this.$refs.loginForm.validate(async isOK=>{//element-ui里的form方法--去查阅
         if(isOK){
           try {
+            // console.log(this.loginForm);
             this.loading=true//打开登录按钮上的转圈
             // 只要校验通过了 才能去调用action
             await this['user/login'](this.loginForm)
             // 应该登录成功之后
             // async标记的函数实际上上是一个promise对象
             // await下面的代码 都是成功执行的代码
-            this.$route.push('/')//切换到主页
+            this.$router.push('/')//切换到主页
           } catch (error) {
             console.log(error);
           }finally{//不论执行try还是catch 都去关闭转圈

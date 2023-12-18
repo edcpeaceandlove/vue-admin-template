@@ -4,7 +4,7 @@ const state = {
   token: getToken()//设置token为共享状态，初始化vuex时，就先从缓存中读取
 }
 const mutations = {
-  getToken(state, token) {
+  setToken(state, token) {
     state.token = token//将数据设置给vuex
     setToken(token)//同步给缓存
   },
@@ -16,7 +16,7 @@ const mutations = {
 const actions = {
   async login(context, data) {
     const result = await login(data)
-    context.commit('getToken', result)
+    context.commit('setToken', result)
   }
 }
 

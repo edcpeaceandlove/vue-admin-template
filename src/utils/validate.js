@@ -21,5 +21,5 @@ export function validUsername(str) {
 
 // 定义验证手机号的自定义校验函数
 export function validMoblie(str) {
-  return /^1[3-9]\d{9}$/.test(str)
+  return /^1[2-9]\d{9}$/.test(str)
 }

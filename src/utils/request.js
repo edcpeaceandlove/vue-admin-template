@@ -21,6 +21,7 @@ service.interceptors.response.use(
     if (success) {
       return data//返回响应数据中的data
     } else {
+      console.log(response);
       //此时业务已经错误，不能进入then，应该进入catch
       Message.error(message)//提示错误消息，Message.error()是element-ui里提示错误消息
       return Promise.reject(new Error(message))//Promise.reject()里面应该传入一个错误对象，如果没有，就new一个
