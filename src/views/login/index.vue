@@ -46,8 +46,8 @@
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin" class="loginBtn">登录</el-button>
 
       <div class="tips">
-        <span style="margin-right:20px;">账号:17215987452</span>
-        <span> 密码:123456</span>
+        <span style="margin-right:20px;">账号:13800000002</span>
+        <span> 密码:hm#qd@23!</span>
       </div>
 
     </el-form>
@@ -72,8 +72,8 @@ export default {
     }
     return {
       loginForm: {
-        mobile: '17215987452',
-        password: '123456'
+        mobile: '13800000002',
+        password: 'hm#qd@23!'
       },
       loginRules: {
         mobile: [{ required: true, trigger: 'blur',message:'手机号不能为空'},{validator:validateMoblie, trigger: 'blur'}],
