@@ -13,7 +13,7 @@
      </el-card>
     </div>
     <!-- 放置新增弹层组件 -->
-    <add-dept :showDialog.sync="showDialog" :treeNode="node" @addDepts="getDepartments"></add-dept>
+    <add-dept ref="addDept"  :showDialog.sync="showDialog" :treeNode="node" @addDepts="getDepartments"></add-dept>
   </div>
 </template>
 
@@ -55,10 +55,13 @@ export default {
       this.showDialog=true//显示新增部门弹出层
       this.node=node
       // console.log(this.node);
+
     },
     editDepts(node){
-      this.showDialog=true
-
+      this.showDialog=true//弹出层
+      this.node=node
+      // 获取部门详情
+      this.$refs.addDept.getDepartDetail(node.id)
     }
   }
   

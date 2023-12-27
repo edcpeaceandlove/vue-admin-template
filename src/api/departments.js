@@ -23,3 +23,19 @@ export function addDepartments(data) {
     data
   })
 }
+
+// 根据id获取某个部门的详情
+export function getDepartDetail(id) {
+  return request({
+    url: `/company/department/${id}`
+  })
+}
+
+// 编辑组织架构的部门
+export function updateDepartments(data) {
+  return request({
+    method: 'put',
+    url: `/company/department/${data.id}`,
+    data
+  })
+}

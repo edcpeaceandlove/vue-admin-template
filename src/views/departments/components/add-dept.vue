@@ -1,6 +1,6 @@
 <template>
   <!-- 新增部门的弹层 -->
-  <el-dialog title="新增部门" :visible="showDialog" @close="btnCancel">
+  <el-dialog :title="showTitle" :visible="showDialog" @close="btnCancel">
     <el-form ref="deptForm" label-width="120px" :model="formData" :rules="rules">
       <el-form-item label="部门名称" prop="name">
         <el-input style="width:80%" placeholder="1-50个字符"  v-model="formData.name" />
@@ -10,7 +10,7 @@
       </el-form-item>
       <el-form-item label="部门负责人" prop="manager">
         <el-select style="width:80%" placeholder="请选择"  v-model="formData.manager" @focus="getEmployeeSimple">
-          <el-option v-for="item in people" :key="item.id" :label="item.username" :value="item.username">
+          <el-option v-for="item in people" :key="item.id" :label="item.username" :value="item.username" >
           </el-option>
         </el-select>
       </el-form-item>
@@ -28,8 +28,9 @@
 </template>
 
 <script>
-import {getDepartments,addDepartments} from "@/api/departments"
+import {getDepartments,addDepartments,getDepartDetail,updateDepartments} from "@/api/departments"
 import {getEmployeeSimple} from '@/api/employees'
+import departments from "@/router/modules/departments"
 export default {
 props:{
   showDialog:{
@@ -53,15 +54,25 @@ data(){
   //  console.log(result);
     // 去找同级部门下有没有和value相同的数据
     // 找到所有的子部门
-   const isRepeat= result.filter(item=>item.pid===this.treeNode.id).some(item=>item.name===value)
+    let isRepeat=false
+    if(this.formData.code===""){
+    isRepeat=  result.filter(item=>item.pid===this.treeNode.pid&&item.id!==this.treeNode.id).some(item=>item.name===value)
+    }else{
+      isRepeat= result.filter(item=>item.pid===this.treeNode.id).some(item=>item.name===value)
+    }
   // //  如果isRepeat为true，说明找到了一样的名字；
   isRepeat?callback(new Error(`同级部门下已存在${value}`)):callback()
   } 
 
   //定义检查新增部门编码是否存在的方法(全局)
   const checkCodeRepeat=async (rule,value,callback)=>{
-   const result= await getDepartments()
-   const isRepeat= result.some(item=>item.code===value&&value)
+    const result= await getDepartments()
+    let isRepeat=false
+  if(this.formData.code===""){
+   isRepeat= result.filter(item=>item.id!==this.treeNode.id).some(item=>item.code===value&&value)
+  }else{
+    isRepeat= result.some(item=>item.code===value&&value)
+  }
    isRepeat?callback(new Error(`${value}已经存在`)):callback()
   }
 
@@ -70,7 +81,7 @@ data(){
       name:'',
       code:'',
       manager:'',
-      introduce:''
+      introduce:'',
     },
     rules:{//定义表单校验规则
       name: [
@@ -96,12 +107,18 @@ data(){
   }
 },
 methods:{
+   
     async getEmployeeSimple(){
      this.people=await getEmployeeSimple()
     },
+
+  
     btnOK(){
     this.$refs.deptForm.validate(async isOK=>{
       if(isOK){
+        // if(this.formData.code===""){
+        //   await updateDepartments(this.formData)
+        // }
         await addDepartments({...this.formData,pid:this.treeNode.id,managerId:this.treeNode.id})
         this.$emit('addDepts')
         this.$emit('update:showDialog',false)
@@ -109,10 +126,31 @@ methods:{
     })
     },
     btnCancel(){
+      // this.formData={
+      //   name:'',
+      // code:'',
+      // manager:'',
+      // introduce:''
+      // }
       this.$emit('update:showDialog',false)
       this.$refs.deptForm.resetFields()
-    }
+    },
+    // 获取部门详情的方法
+    async getDepartDetail(id){
+   const form =  await getDepartDetail(id)
+  //  console.log(form);
+   this.formData.name=form.name
+   this.formData.manager=form.managerName
+   this.formData.code=form.code
+   this.formData.introduce=form.introduce
+    },
+  
   },
+  computed:{
+    showTitle(){
+     return this.formData.code===""?"新增子部门":"编辑部门"
+    }
+  }
 }
 </script>
 
